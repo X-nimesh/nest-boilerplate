@@ -5,7 +5,6 @@ import { config } from 'dotenv';
 config();
 
 export const typeOrmConfigs = () => {
-  console.log('process.env.NODE_ENV', process.env.SAMPLE_PAN);
   const obj: PostgresConnectionOptions = {
     type: 'postgres',
     host: process.env.POSTGRES_HOST || 'localhost',
