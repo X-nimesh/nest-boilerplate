@@ -6,7 +6,12 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_ADMIN_KEY, IS_PUBLIC_KEY } from './decorator';
-
+import { User } from '../user/user.entity';
+// interface User {
+//   id: number;
+//   username: string;
+//   role: string;
+// }
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
@@ -30,15 +35,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     return super.canActivate(context);
   }
-  handleRequest(err, user, info) {
+  handleRequest<TUser = User>(err: Error | null, user: TUser): TUser {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }
-    if (this.checkadmin) {
-      if (user.role !== 'admin') {
-        throw err || new UnauthorizedException('Not an Admin');
-      }
-    }
+    // if (this.checkadmin) {
+    //   if (user.role !== 'admin') {
+    //     throw err || new UnauthorizedException('Not an Admin');
+    //   }
+    // }
     return user;
   }
 }

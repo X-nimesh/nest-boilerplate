@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,11 +21,11 @@ export class AuthService {
       },
     });
     if (!userDetails) {
-      return 'User not found';
+      throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
     }
     const isMatch = await bcrypt.compare(body?.password, userDetails.password);
     if (!isMatch) {
-      return 'Invalid credentials';
+      throw new HttpException('Invalid Credential', HttpStatus.UNAUTHORIZED);
     }
     const payload = { userId: userDetails.userId };
     return {
@@ -36,12 +36,23 @@ export class AuthService {
     };
   }
   async signUp(body: UserRegisterDto) {
-    const hashedPassword = await bcrypt.hash(body.password, 10);
+    const hashedPassword: any = await bcrypt.hash(body.password, 10);
+    // check email already exist or not
+    const userExist = await this.userRepository.findOne({
+      where: { email: body.email },
+      select: {
+        userId: true,
+      },
+    });
+    if (userExist) {
+      throw new HttpException('User already exist!', HttpStatus.CONFLICT);
+    }
     const userDet = await this.userRepository.save({
       name: body.name,
       email: body.email,
       password: hashedPassword,
     });
-    return { name: userDet.name };
+    delete userDet.password;
+    return userDet;
   }
 }

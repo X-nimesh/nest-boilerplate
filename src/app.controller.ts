@@ -8,7 +8,7 @@ export class AppController {
 
   @Public()
   @Get()
-  getHello(): string {
+  getHello(): any {
     return this.appService.getHello();
   }
 }

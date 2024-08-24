@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shangrila-cargo-be
+    image: shangrila-cargo-be
+    ports:
+      - 8001:8001
+    restart: unless-stopped

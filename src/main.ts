@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 config();
 const PORT = process.env.PORT || 3000;
 async function bootstrap() {
@@ -27,6 +28,14 @@ async function bootstrap() {
     // resetting global prefix
     // app.setGlobalPrefix('/');
   }
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
   await app.listen(PORT);
 }
 bootstrap().then(() => {
